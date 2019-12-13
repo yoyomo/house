@@ -1,0 +1,41 @@
+{
+  "name": "house",
+  "version": "1.0.0",
+  "description": "Houses and apartments in three.js",
+  "main": "src/index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --open",
+    "build": "webpack",
+    "flow-watch": "fswatch -o ./ | xargs -n1 -I{} sh -c 'clear; printf \"\\033[3J\" && flow'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoyomo/house.git"
+  },
+  "keywords": [
+    "threejs",
+    "three.js",
+    "flow",
+    "house",
+    "apartments",
+    "interior",
+    "architecture"
+  ],
+  "author": "Armando J Ortiz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yoyomo/house/issues"
+  },
+  "homepage": "https://github.com/yoyomo/house#readme",
+  "dependencies": {
+    "muvjs": "^2.3.2",
+    "three": "^0.111.0"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.113.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  }
+}
