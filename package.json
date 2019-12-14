@@ -29,7 +29,6 @@
   },
   "homepage": "https://github.com/yoyomo/house#readme",
   "dependencies": {
-    "muvjs": "^2.3.2",
     "three": "^0.111.0"
   },
   "devDependencies": {
