@@ -84,18 +84,7 @@ type Position = {
 }
 */
 
-const SCALE = 0.1;
-
-
 const createCenter = (position, size) => {
-
-  for (let param in size) {
-    size[param] *= SCALE;
-  }
-
-  for (let param in position) {
-    position[param] *= SCALE;
-  }
 
   const geometry = new BoxGeometry(size.w, size.h, size.d);
   const material = new MeshNormalMaterial();
@@ -110,14 +99,6 @@ const createCenter = (position, size) => {
 }
 
 const createPlaneInCentimeters = (position, size) => {
-
-  for (let param in size) {
-    size[param] *= SCALE;
-  }
-
-  for (let param in position) {
-    position[param] *= SCALE;
-  }
 
   const geometry = new BoxGeometry(size.w, size.h, size.d);
   const material = new MeshNormalMaterial();
@@ -147,7 +128,7 @@ const initializeRoom = state => {
 
   const center = createCenter({ x: 0, y: 0, z: 0 }, { w: 0.02, h: 0.02, d: 0.02 });
   const floor = createPlaneInCentimeters({ x: 0, y: 0, z: 0 }, { w: 3.04, h: 0.02, d: 3.54 });
-  const bedWall = createPlaneInCentimeters({ x: 0, y: 0, z: floor.geometry.parameters.depth / SCALE}, { w: 3.04, h: 1.91 + 0.46, d: 0.02 })
+  const bedWall = createPlaneInCentimeters({ x: 0, y: 0, z: floor.geometry.parameters.depth}, { w: 3.04, h: 1.91 + 0.46, d: 0.02 })
 
   allCubes.push(center);
   allCubes.push(floor);
