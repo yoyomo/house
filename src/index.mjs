@@ -19,15 +19,26 @@ const handleZoom = state => e => {
 const handleRotation = state => e => {
   // e.preventDefault();
 
+  const inverted = true;
+
+  const DELTA = 0.01;
+
+  const delta = inverted ? -DELTA : DELTA;
+
   if (state.scene) {
-    state.scene.rotation.x += e.movementY * 0.01;
-    state.scene.rotation.y += e.movementX * 0.01;
+    state.scene.rotation.x += e.movementY * delta;
+    state.scene.rotation.y += e.movementX * delta;
   }
+
+  // state.camera.rotation.x += e.movementY * delta;
+  // state.camera.rotation.y += e.movementX * delta;
 }
 
 let zoomEventHandler;
 let mouseDownEventHandler;
 let mouseMoveEventHandler;
+let keyPressEventHandler;
+
 
 const handleMouse = state => e => {
   // e.preventDefault();
@@ -47,6 +58,19 @@ const handleMouse = state => e => {
 
 }
 
+const handleKeyPress = state => e => {
+  const vel = 0.001;
+  if(e.key === 'w'){
+    state.camera.position.z -= vel;
+  } else if(e.key === 's'){
+    state.camera.position.z += vel;
+  } else if(e.key === 'a'){
+    state.camera.position.x -= vel;
+  } else if(e.key === 'd'){
+    state.camera.position.x += vel;
+  }
+}
+
 const animate = (state, time) => {
   time *= 0.001;
 
@@ -58,6 +82,11 @@ const animate = (state, time) => {
   window.removeEventListener('mousedown', mouseDownEventHandler, { passive: false});
   mouseDownEventHandler = handleMouse(state)
   window.addEventListener('mousedown', mouseDownEventHandler, { passive: false});
+
+  keyPressEventHandler = handleKeyPress(state);
+  window.addEventListener('keypress', keyPressEventHandler, { passive: false, capture: true});
+
+
 
   if (state.scene) {
     // state.scene.rotation.x = time;
@@ -112,27 +141,30 @@ const createPlaneInCentimeters = (position, size) => {
   return plane
 }
 
-const createPlaneRelativeTo = (relative, position, size) => {
-
-  const plane = createPlaneInCentimeters(position, size);
-  for (let pos in position) {
-    plane.position[pos] = relative.position[pos] + position[pos];
-  }
-
-  return plane;
-}
-
 const initializeRoom = state => {
   const allCubes = [];
 
 
   const center = createCenter({ x: 0, y: 0, z: 0 }, { w: 0.02, h: 0.02, d: 0.02 });
-  const floor = createPlaneInCentimeters({ x: 0, y: 0, z: 0 }, { w: 3.04, h: 0.02, d: 3.54 });
-  const bedWall = createPlaneInCentimeters({ x: 0, y: 0, z: floor.geometry.parameters.depth}, { w: 3.04, h: 1.91 + 0.46, d: 0.02 })
+
+  const bedFloor = createPlaneInCentimeters({ x: 0, y: 0, z: 0 }, { w: 3.04, h: 0.02, d: 3.54 });
+
+  const bedDoor = [
+  createPlaneInCentimeters({ x: 0, y: 0, z: bedFloor.geometry.parameters.depth}, { w: 0.015, h: 1.91, d: 0.03 })
+  , createPlaneInCentimeters({ x: 0.015 + 0.72, y: 0, z: bedFloor.geometry.parameters.depth}, { w: 0.015, h: 1.91, d: 0.03 })
+  , createPlaneInCentimeters({ x: 0, y: 1.91, z: bedFloor.geometry.parameters.depth}, { w: 0.75, h: 0.46, d: 0.03 })
+  ];
+
+  const bedWall = [
+  ...bedDoor
+  , createPlaneInCentimeters({ x: 0.75, y: 0, z: bedFloor.geometry.parameters.depth}, { w: 3.04 - 0.75, h: 1.91 + 0.46, d: 0.02 })
+  ];
+
+
 
   allCubes.push(center);
-  allCubes.push(floor);
-  allCubes.push(bedWall);
+  allCubes.push(bedFloor);
+  allCubes.push(...bedWall);
 
   return allCubes;
 };
@@ -147,7 +179,11 @@ const start = () => {
   const far = 10;
 
   state.camera = new PerspectiveCamera(fov, aspect, near, far);
-  state.camera.position.z = 1;
+    state.camera.position.z = 1;
+
+  // state.camera.position.z = -1;
+  state.camera.position.y = 1.75;
+  state.camera.position.x = 1;
 
   const allCubes = initializeRoom(state);
 
@@ -155,7 +191,7 @@ const start = () => {
 
   allCubes.map(cube => {
     if (!state.scene) return
-    state.scene.add(cube)
+      state.scene.add(cube)
   })
 
   state.renderer = new WebGLRenderer({ antialias: true });
